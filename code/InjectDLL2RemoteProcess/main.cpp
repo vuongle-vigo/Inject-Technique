@@ -1,4 +1,5 @@
 #include "misc.hpp"
+#include "PEUtils.hpp"
 
 #define DEBUG(x, ...) printf(x, ##__VA_ARGS__)
 
@@ -57,6 +58,15 @@ int main() {
 		DEBUG("[-] Cannot find process to get handle");
 		return -1;
 	}
+	PEUtils peUtils;
+
+	PEUtils::PPE_STRUCT pPeStruct = { 0 };
+
+
+
+	PBYTE pbBuffer = nullptr;
+	DWORD dwFilesize = 0;
+	peUtils.ReadFileFromDisk("C:\\Users\\Yasuo\\source\\repos\\Dll1\\x64\\Release\\Dll1.dll", &pbBuffer, &dwFilesize);
 
 	HANDLE hDll = CreateFileA("C:\\Users\\Yasuo\\source\\repos\\Dll1\\x64\\Release\\Dll1.dll", GENERIC_READ, NULL, NULL, OPEN_EXISTING, NULL, NULL);
 	DWORD_PTR dwDllSize = GetFileSize(hDll, NULL);
@@ -76,6 +86,7 @@ int main() {
 		DEBUG("[-] Cannot alloc memory in remote process with error code: %d", GetLastError());
 		return -1;
 	}
+
 	DWORD dwDeltaImagebase = (DWORD_PTR)lpNewDllImagebase - pPeStruct.pImageNtHeader->OptionalHeader.ImageBase;
 
 	//Write PE Header to Remote process
